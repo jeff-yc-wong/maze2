@@ -72,7 +72,7 @@ while True:
 # Asking for which direction
 while True:
     reply = input("Which way are you facing?\nPlease Enter either North, East, South or West\n")
-    if reply not in directions :
+    if reply not in directions:
         print("Error! Make sure you enter one of the given directions")
     else:
         facing = reply
