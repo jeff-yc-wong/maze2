@@ -10,14 +10,19 @@ from colorama import Fore, Back, Style
 # Functions
 def printMaze(maze):
     print("[", end="")
-    for i in range(0, height):
+    for i in range(0, height - 1):
         print("[", end="")
         for j in range(0, width - 1):
-            print(str(maze[i][j]), end=", ")
-        print(str(maze[i][width - 1]), end="")
+            print("\'%s\'" % str(maze[i][j]), end=", ")
+        print("\'%s\'" % str(maze[i][width - 1]), end="")
         print("],")
-    print("]")
 
+    print("[", end="")
+    for j in range(0, width - 1):
+        print("\'%s\'" % str(maze[height-1][j]), end=", ")
+    print("\'%s\'" % str(maze[height-1][width - 1]), end="")
+    print("]", end="")
+    print("]")
 
 # Find number of surrounding cells
 def surroundingCells(rand_wall):
@@ -247,5 +252,3 @@ for i in range(width - 1, 0, -1):
 
 # Print final maze
 printMaze(maze)
-
-print(starting_height, starting_width)
