@@ -73,8 +73,8 @@ class Maze:
             print("")
 
     def print_steps(self):
-        for step in self.steps:
-            print(step)
+        for i, step in enumerate(self.steps):
+            print("%d: " % i + str(step))
 
     def step_forward(self):
         allow = False
@@ -184,6 +184,9 @@ class Maze:
 
         return wall
 
+    def at_exit(self):
+        return (self.x, self.y) == (self.end_x, self.end_y)
+
 
 def main():
     """
@@ -196,23 +199,25 @@ def main():
             - check_front_wall()
     """
 
-    maze = Maze()
+    # Students will be implementing the steps below this line
 
-    # Right Hand Rule
-    while (maze.x, maze.y) != (maze.end_x, maze.end_y):
-        if not maze.check_right_wall():
-            maze.turn_right()
-        while maze.check_front_wall():
-            maze.turn_left()
-        maze.step_forward()
+    # Solution 1: Right Hand Rule
+    right_maze = Maze()
 
-    maze.print_steps()
-    maze.print_maze()
+    while not right_maze.at_exit():
+        if not right_maze.check_right_wall():
+            right_maze.turn_right()
+        while right_maze.check_front_wall():
+            right_maze.turn_left()
+        right_maze.step_forward()
 
-    # Left Hand Rule
+    right_maze.print_steps()
+    right_maze.print_maze()
+
+    # Solution 2: Left Hand Rule
     left_maze = Maze()
 
-    while (left_maze.x, left_maze.y) != (left_maze.end_x, left_maze.end_y):
+    while not left_maze.at_exit():
         if not left_maze.check_left_wall():
             left_maze.turn_left()
         while left_maze.check_front_wall():
