@@ -78,27 +78,7 @@ class Maze:
 
     def step_forward(self):
         allow = False
-        # if self.facing == 0 and (self.x-1 != 0):
-        #     if self.maze[self.x-1][self.y] != "1":
-        #         self.x -= 1
-        #         allow = True
-        # # Facing Left
-        # elif self.facing == 1 and (self.y-1 != 0):
-        #     if self.maze[self.x][self.y-1] != "1":
-        #         self.y -= 1
-        #         allow = True
-        # # Facing Down
-        # elif self.facing == 2 and (self.x+1 != self.row-1):
-        #     if self.maze[self.x+1][self.y] != "1":
-        #         self.x += 1
-        #         allow = True
-        # # Facing Right
-        # elif self.facing == 3 and (self.y+1 != self.col-1):
-        #     if self.maze[self.x][self.y+1] != "1":
-        #         self.y += 1
-        #         allow = True
-        # else:
-        #     print("Error: Walking into a wall!")
+
         # Facing Up
         if self.facing == 0:
             if self.maze[self.x - 1][self.y] != "1":
@@ -206,18 +186,19 @@ class Maze:
 
 
 def main():
+    """
+    List of functions to use and their definition:
+            - step_forward()
+            - turn_left()
+            - turn_right()
+            - check_left_wall()
+            - check_right_wall()
+            - check_front_wall()
+    """
+
     maze = Maze()
 
-    """
-        List of functions to use and their definition:
-                - step_forward()
-                - turn_left()
-                - turn_right()
-                - check_left_wall()
-                - check_right_wall()
-                - check_top_wall()
-        """
-
+    # Right Hand Rule
     while (maze.x, maze.y) != (maze.end_x, maze.end_y):
         if not maze.check_right_wall():
             maze.turn_right()
@@ -227,6 +208,19 @@ def main():
 
     maze.print_steps()
     maze.print_maze()
+
+    # Left Hand Rule
+    left_maze = Maze()
+
+    while (left_maze.x, left_maze.y) != (left_maze.end_x, left_maze.end_y):
+        if not left_maze.check_left_wall():
+            left_maze.turn_left()
+        while left_maze.check_front_wall():
+            left_maze.turn_right()
+        left_maze.step_forward()
+
+    left_maze.print_steps()
+    left_maze.print_maze()
 
     return 0
 
