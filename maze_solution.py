@@ -202,6 +202,32 @@ def main():
 
     # Students will be implementing the steps below this line
 
+    # Solution 1: Right Hand Rule
+    right_maze = Maze()
+
+    while not right_maze.at_exit():
+        if not right_maze.check_right_wall():
+            right_maze.turn_right()
+        while right_maze.check_front_wall():
+            right_maze.turn_left()
+        right_maze.step_forward()
+
+    right_maze.print_steps()
+    right_maze.print_maze()
+
+    # Solution 2: Left Hand Rule
+    left_maze = Maze()
+
+    while not left_maze.at_exit():
+        if not left_maze.check_left_wall():
+            left_maze.turn_left()
+        while left_maze.check_front_wall():
+            left_maze.turn_right()
+        left_maze.step_forward()
+
+    left_maze.print_steps()
+    left_maze.print_maze()
+
     return 0
 
 
