@@ -190,13 +190,14 @@ class Maze:
 
 def main():
     """
-    List of functions to use and their definition:
+    List of functions available for use and their definition:
             - step_forward()
             - turn_left()
             - turn_right()
             - check_left_wall()
             - check_right_wall()
             - check_front_wall()
+            - at_exit()
     """
 
     # Students will be implementing the steps below this line
