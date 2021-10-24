@@ -1,15 +1,15 @@
+import copy
+import os
 from time import sleep
 
-
-# # The screen clear function
-# def screen_clear():
-#     # # for mac and linux(here, os.name is 'posix')
-#     # if os.name == 'posix':
-#     #     _ = os.system('clear')
-#     # else:
-#     #     # for windows platfrom
-#     #     _ = os.system('cls')
-#     print("\033c")
+# The screen clear function
+def screen_clear():
+    # for mac and linux(here, os.name is 'posix')
+    if os.name == 'posix':
+        _ = os.system('clear')
+    else:
+        # for windows platfrom
+        _ = os.system('cls')
 
 
 class Maze:
@@ -31,9 +31,8 @@ class Maze:
 
     # 0 = "Up", 1 = "Left", 2 = "Down", 3 = "Right"
     facing = 0
-    steps = []
-    row = len(maze)
-    col = len(maze[0])
+    row = 10
+    col = 10
     minimal_steps = []
 
     def __init__(self):
@@ -41,6 +40,8 @@ class Maze:
         self.end_x, self.end_y = self.find_exit(self.col)
         self.x = self.start_x
         self.y = self.start_y
+        self.facing = 0
+        self.steps = []
         self.steps.append((self.x, self.y))
 
     def find_start(self, row, col):
@@ -65,15 +66,35 @@ class Maze:
         else:
             return 0, end_y
 
-    def print_maze(self):
-        # print("   ", end="")
-        # for i in range(0, self.row):
-        # print("%2d" % i, end=" ")
+    def visualize_steps(self, path="default"):
+        steps = self.steps
+        if path == "minimal":
+            steps = self.minimal_steps
 
-        # print("")
+        for step in steps:
+            for i in range(0, self.row):
+                for j in range(0, self.col):
+                    if (i, j) == step:
+                        print("\033[1;92m%2c\033[0m" % '@', end=" ")
+                    elif self.maze[i][j] == '1':
+                        print("%2c" % '#', end=" ")
+                    else:
+                        print("%2c" % '.', end=" ")
+                print("")
+
+            sleep(0.5)
+            screen_clear()
+
+
+    def print_maze(self):
+        print("\033[1;92mPrinting Maze...\033[0m")
+        print("   ", end="")
+        for i in range(0, self.row):
+            print("%2d" % i, end=" ")
+        print("")
 
         for i in range(0, self.row):
-            # print("%2d" % i, end=" ")
+            print("%2d" % i, end=" ")
             for j in range(0, self.col):
                 if self.maze[i][j] == '1':
                     print("%2c" % '#', end=" ")
@@ -81,24 +102,35 @@ class Maze:
                     print("%2c" % '.', end=" ")
             print("")
 
+        print("")
+
     def print_steps(self):
-        for step in self.steps:
-            for i in range(0, self.row):
-                for j in range(0, self.col):
-                    if self.maze[i][j] == '1':
-                        print("%c" % '#', end=" ")
-                    elif (i, j) == step:
-                        print("%s" % '\033[93m@\033[0m', end=" ")
-                    else:
-                        print("%c" % '.', end=" ")
-                print("")
+        print_array = copy.deepcopy(self.maze)
 
-            sleep(0.3)
-            print("\n" * 10)
+        for i in range(0, self.row):
+            for j in range(0, self.col):
+                if print_array[i][j] == '1':
+                    print_array[i][j] = '#'
+                else:
+                    print_array[i][j] = '.'
 
-    def print_minimal_steps(self):
-        for i, step in enumerate(self.minimal_steps):
-            print("%d: " % i + str(step))
+        for index, step in enumerate(self.steps):
+            print_array[step[0]][step[1]] = str(index + 1)
+
+        print("\033[1;92mPrinting Maze with Step Numbers...\033[0m")
+
+        for i in range(0, self.row):
+            for j in range(0, self.col):
+                if print_array[i][j] == '#':
+                    print("%3c" % '#', end=" ")
+                elif print_array[i][j] == '.':
+                    print("%3c" % '.', end=" ")
+                else:
+                    # print("%3s" % f"\033[93m{print_array[i][j]}\033[0m", end=" ")
+                    print("\033[1;93m%3s\033[0m" % print_array[i][j], end=" ")
+            print("")
+
+        print("")
 
     def step_forward(self):
         allow = False
@@ -209,6 +241,8 @@ class Maze:
         return wall
 
     def at_exit(self):
+        if (self.x, self.y) == (self.end_x, self.end_y):
+            print("Woo Hoo! You are at the Exit!!!")
         return (self.x, self.y) == (self.end_x, self.end_y)
 
     def minimal_path(self):
@@ -237,9 +271,41 @@ class Maze:
         x, y = self.end_x, self.end_y
         while previous[x][y] != self.start_x * self.row + self.start_y:
             self.minimal_steps.insert(0, (x, y))
+            temp = x
             x = int(previous[x][y] / self.col)
-            y = previous[x][y] % self.col
+            y = previous[temp][y] % self.col
 
+        self.minimal_steps.insert(0, (x, y))
+        self.minimal_steps.insert(0, (self.start_x, self.start_y))
+
+        print_array = copy.deepcopy(self.maze)
+
+        for i in range(0, self.row):
+            for j in range(0, self.col):
+                if print_array[i][j] == '1':
+                    print_array[i][j] = '#'
+                else:
+                    print_array[i][j] = '.'
+
+        print("\033[1;92mPrinting Step Positions...\033[0m")
+        for index, step in enumerate(self.minimal_steps):
+            print(f"{index}: {step}")
+            print_array[step[0]][step[1]] = str(index + 1)
+
+        print("\033[1;92mPrinting Maze with Minimal Path...\033[0m")
+
+        for i in range(0, self.row):
+            for j in range(0, self.col):
+                if print_array[i][j] == '#':
+                    print("%3c" % '#', end=" ")
+                elif print_array[i][j] == '.':
+                    print("%3c" % '.', end=" ")
+                else:
+                    # print("%3s" % f"\033[93m{print_array[i][j]}\033[0m", end=" ")
+                    print("\033[1;93m%3s\033[0m" % print_array[i][j], end=" ")
+            print("")
+
+        return
 
 def main():
     """
@@ -253,36 +319,34 @@ def main():
             - at_exit()
     """
 
-    # Students will be implementing the steps below this line
+    # -------- Students will be implementing the steps below this line --------
 
-    # Solution 1: Right Hand Rule
-    right_maze = Maze()
+    # Solution 1: Using Right Hand Rule
+    maze = Maze()
 
-    while not right_maze.at_exit():
-        if not right_maze.check_right_wall():
-            right_maze.turn_right()
-        while right_maze.check_front_wall():
-            right_maze.turn_left()
-        right_maze.step_forward()
+    while not maze.at_exit():
+        if not maze.check_right_wall():
+            maze.turn_right()
+        while maze.check_front_wall():
+            maze.turn_left()
+        maze.step_forward()
 
-    # right_maze.print_maze()
-    right_maze.print_steps()
+    # Solution 2: Using Left Hand Rule
+    maze = Maze()
 
-    # Solution 2: Left Hand Rule
-    # left_maze = Maze()
-    #
-    # while not left_maze.at_exit():
-    #     if not left_maze.check_left_wall():
-    #         left_maze.turn_left()
-    #     while left_maze.check_front_wall():
-    #         left_maze.turn_right()
-    #     left_maze.step_forward()
-    #
-    # left_maze.print_steps()
-    # left_maze.print_maze()
+    while not maze.at_exit():
+        if not maze.check_left_wall():
+            maze.turn_left()
+        while maze.check_front_wall():
+            maze.turn_right()
+        maze.step_forward()
+    
+    # -------- Students will be implementing the steps above this line --------
 
-    # left_maze.minimal_path()
-    # left_maze.print_minimal_steps()
+    maze.print_maze()
+    maze.print_steps()
+    maze.minimal_path()
+    # maze.visualize_steps(path="minimal")
 
     return 0
 
